@@ -50,7 +50,7 @@ playerMesh.applyTranslation(0.0, -0.25, 0.0);
 player.add(playerMesh);
 
 // Create a CollisionObject for the player.
-const playerCollisionObject = new CollisionObject(playerMesh);
+const playerCollisionObject = new CollisionObject(playerMesh, true);
 
 // Add an OnIntersectListener so that we can react to the player colliding into other CollisionObjects in the world.
 playerCollisionObject.setOnIntersectListener((delta, entity) => {

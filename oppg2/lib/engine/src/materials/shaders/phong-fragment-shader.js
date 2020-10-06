@@ -37,7 +37,14 @@ in vec2 texcoord_0;
 
 out vec4 fColor;
 
+const float endPoint = 20.0;
+const float startPoint = 8.0;
+const vec4 fogColor = vec4(1.0, 1.0, 1.0, 1.0);
+
 void main() {
+
+    float linearFogFactor = (endPoint - length(position))/(endPoint - startPoint);
+
     vec3 normal = normalize(normal); // Interpolated normal may not be normalized anymore.
 
     vec3 totalLighting = vec3(light.ambient) * vec3(materialAmbient);
@@ -87,5 +94,5 @@ void main() {
 
     }
 
-    fColor = vec4(totalLighting, 1.0);
+    fColor = vec4(totalLighting, 1.0) * linearFogFactor + (1.0-linearFogFactor)*fogColor;
 }`;

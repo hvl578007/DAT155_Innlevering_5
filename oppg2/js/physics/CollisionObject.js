@@ -1,13 +1,15 @@
 
 export default class CollisionObject {
 
-    constructor(mesh) {
+    constructor(mesh, dynamic = false) {
 
         this.mesh = mesh;
 
         this._onIntersect = null;
 
         this._destroy = false;
+
+        this._dynamic = dynamic;
 
     }
 
@@ -17,5 +19,13 @@ export default class CollisionObject {
 
     destroy() {
         this._destroy = true;
+    }
+
+    get dynamic() {
+        return this._dynamic;
+    }
+
+    set dynamic(value) {
+        this._dynamic = value;
     }
  }

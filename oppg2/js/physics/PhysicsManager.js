@@ -49,6 +49,12 @@ export default class PhysicsManager {
 
         for (let i = 0; i < this.entities.length; i += 1) {
 
+            //task 2
+            //hopper over statiske objekt
+            if (this.entities[i].dynamic === false) {
+                continue;
+            }
+
             for (let j = 0; j < this.entities.length; j += 1) {
 
                 if (i === j) {
