@@ -9,7 +9,9 @@ import {
     SphereGeometry,
     TextureLoader
 } from "./build/three.module.js";
+import Planet from "./Planet.js";
 import SimpleColorMaterial from "./SimpleColorMaterial.js";
+import SimpleSmokeMaterial from "./SimpleSmokeMaterial.js";
 
 export default class SolarSystem{
     //Bruker solsystemets constructor for å sette opp planetene. Tar inn Three.js sin scene som parameter, siden vi må legge objekter til i denne
@@ -37,7 +39,11 @@ export default class SolarSystem{
         let sunMaterial = new SimpleColorMaterial({
             mapInParameters: sunTexture,
             colorInParameters: new Color(0xFF0000)
-        })
+        });
+
+        sunMaterial = new SimpleSmokeMaterial({
+            paramMap: sunTexture
+        });
 
         //Oppretter selve sol-Meshen, som nå består av et Geometry-objekt og et Material-objekt
         this.sun = new Mesh(sunGeometry, sunMaterial);
@@ -48,7 +54,8 @@ export default class SolarSystem{
         //Oppretter et usynlig Object3D som jorden vår skal rotere rundt.
         this.earthOrbitNode = new Object3D();
         //Legger det usynlige objektet som barn av solen
-        this.sun.add(this.earthOrbitNode);
+
+        scene.add(this.earthOrbitNode);
 
         //Samme prosedyre for jorden vår
         //Last inn tekstur og gi denne til et Material
@@ -68,6 +75,11 @@ export default class SolarSystem{
                                                             normalMap: earthNormalMap
                                                             });
 
+        /*
+        earthMaterial = new SimpleSmokeMaterial({
+            paramMap: earthTexture
+        });
+        */
 
         //Forandrer radius - gjør jorden halvparten så stor som solen
         radius = 2.5;
@@ -76,11 +88,61 @@ export default class SolarSystem{
         //Oppretter Mesh for jorden ved å gi Geometry og Material
         this.earth = new Mesh(earthGeometry, earthMaterial);
 
-        //Flytter jorden litt til høyre for solen
-        this.earth.position.x = 15;
+        this.earthCenterNode = new Object3D();
+        this.earthOrbitNode.add(this.earthCenterNode);
 
-        //Legger jorden som barn av earthOrbitNode - this.earth arver nå rotasjoner som gjøres på this.earthOrbitNode
-        this.earthOrbitNode.add(this.earth);
+        //Flytter jorden litt til høyre for solen
+        this.earthCenterNode.position.x = 20;
+
+        this.earthCenterNode.add(this.earth);
+
+        //lagar månen:
+        let moonTextureUrl = './assets/2k_moon.jpg';
+        /*
+        let moonTexture = new TextureLoader().load(moonTextureUrl);
+        
+        //todo specular og normal map?
+
+        let moonMaterial = new MeshPhongMaterial({
+            map: moonTexture,
+            shininess: 1.0
+        });
+
+        //gjer månen liten
+        radius = 0.5;
+        let moonGeometry = new SphereGeometry(radius, widthSegments, heightSegments);
+
+        this.moon = new Mesh(moonGeometry, moonMaterial);
+        */
+        this.moon = new Planet({
+            radius: 0.5,
+            planetTextureURL: moonTextureUrl
+        });
+
+        this.moonOrbitNode = new Object3D();
+        this.moonCenterNode = new Object3D();
+        this.moonCenterNode.position.x = 5;
+
+        this.earthCenterNode.add(this.moonOrbitNode);
+        this.moonOrbitNode.add(this.moonCenterNode);
+        this.moonCenterNode.add(this.moon);
+
+        //lagar mars:
+        this.marsOrbitNode = new Object3D();
+        this.marsCenterNode = new Object3D();
+        let marsTextureURL = './assets/2k_mars.jpg';
+        this.mars = new Planet({
+            radius: 1.2,
+            planetTextureURL: marsTextureURL
+        });
+        //flytter mars ut
+        this.marsCenterNode.position.x = 25;
+
+        //legg til mars i scenen
+        scene.add(this.marsOrbitNode);
+        this.marsOrbitNode.add(this.marsCenterNode);
+        this.marsCenterNode.add(this.mars);
+        
 
         //Det nye Materialet forholder seg til lys, og vil være helt svart.
         //Legger derfor til lys i scenen - PointLight lyser i alle retninger rundt seg
@@ -99,6 +161,9 @@ export default class SolarSystem{
         this.rotateObject(this.sun, [0.0, 0.005, 0.0]);
         this.rotateObject(this.earthOrbitNode, [0.0, 0.01, 0.0]);
         this.rotateObject(this.earth, [0.0, 0.02, 0.0]);
+        this.rotateObject(this.moonOrbitNode, [0.0, 0.1, 0.0]);
+        this.rotateObject(this.marsOrbitNode, [0.0, 0.008, 0.0]);
+        this.rotateObject(this.mars, [0.0, 0.015, 0.0]);
     }
 
     rotateObject(object, rotation){
