@@ -3,6 +3,7 @@ import MouseLookController from './MouseLookController.js';
 import { Renderer, Scene, Node, Mesh, Primitive, Light, BasicMaterial, CubeMapMaterial, PerspectiveCamera, vec3, vec4 } from '../lib/engine/index.js';
 import { CollisionObject, PhysicsManager } from './physics/index.js';
 import ObstacleManager from './obstacles/ObstacleManager.js';
+import { div } from '../lib/engine/lib/gl-matrix/src/vec3.js';
 
 // Create a Renderer and append the canvas element to the DOM.
 let renderer = new Renderer(window.innerWidth, window.innerHeight);
@@ -52,6 +53,15 @@ player.add(playerMesh);
 // Create a CollisionObject for the player.
 const playerCollisionObject = new CollisionObject(playerMesh, true);
 
+//task 1 helse: (burde nok vere noko attributt på spelaren)
+const maxHealth = 5;
+let totalHealth = maxHealth;
+oppdaterLiv();
+
+const invulnerabilityTime = 180; //5 sek * 60 frames = 180. Fungerer berre korrekt om browser køyrer 60fps
+let invulnerabilityNow = invulnerabilityTime;
+let isInvulnerable = false;
+
 // Add an OnIntersectListener so that we can react to the player colliding into other CollisionObjects in the world.
 playerCollisionObject.setOnIntersectListener((delta, entity) => {
     // 'entity' is the CollisionObject with which the player intersected.
@@ -61,7 +71,59 @@ playerCollisionObject.setOnIntersectListener((delta, entity) => {
 
     // and destroy the collision object.
     entity.destroy();
+
+    //sjekkar om han er udødeleg eller ikkje
+    if (!isInvulnerable) {
+        //har kollidert så minker livet:
+        totalHealth--;
+        //oppdater livet
+        oppdaterLiv();
+
+        isInvulnerable = true;
+    }
+
+    //om ein er tom for helse
+    if(totalHealth === 0) {
+        tapte();
+    }
 });
+
+/**
+ * Metode som oppdaterer liv-counter i html-dokumentet (burde nok vere eigen klasse?!?)
+ */
+function oppdaterLiv() {
+    //TODO lage noko grafikk og ikkje berre html?? (teikne kubar i eit hjørne?)
+
+    let livIgjenElement = document.getElementById("livH3");
+    livIgjenElement.innerHTML = "Liv igjen: " + totalHealth;
+}
+
+/**
+ * Metode som fjernar canvas-elementet og lagar ein div som seier "game over", før den reloader sida etter 5 sekund
+ */
+function tapte() {
+    document.body.removeChild(renderer.domElement);
+    let divElement = document.getElementById("helseDiv");
+
+    //skuljer liva
+    let livIgjenElement = document.getElementById("livH3");
+    livIgjenElement.hidden = true;
+
+    let h1Element = document.createElement("h1");
+    let tekst = document.createTextNode("GAME OVER");
+    h1Element.appendChild(tekst);
+    divElement.appendChild(h1Element);
+    document.body.appendChild(divElement);
+
+    //om ein vil automatisk reloade sida etter 5 sekund?
+    setTimeout( () => {
+        window.location.reload();
+
+        //sånn just in case?
+        totalHealth = maxHealth;
+    }, 5000);
+    
+}
 
 physicsManager.add(playerCollisionObject);
 
@@ -221,6 +283,16 @@ scene.update();
 const velocity = vec3.fromValues(0.0, 0.0, 0.0);
 let then = 0;
 function loop(now) {
+
+    //invulnerability
+    if (isInvulnerable) {
+        invulnerabilityNow--;
+    }
+
+    if (invulnerabilityNow === 0) {
+        isInvulnerable = false;
+        invulnerabilityNow = invulnerabilityTime;
+    }
 
     let delta = now - then;
     then = now;
