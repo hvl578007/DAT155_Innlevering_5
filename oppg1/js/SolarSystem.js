@@ -154,18 +154,18 @@ export default class SolarSystem{
         this.neptuneCenterNode = new Object3D();
         let neptuneTextureURL = './assets/2k_neptune.jpg';
         this.neptune = new Planet({
-            radius: 3.0,
+            radius: 2.0,
             planetTextureURL: neptuneTextureURL
         });
 
-        this.neptuneCenterNode.position.x = 55;
+        this.neptuneCenterNode.position.x = 51;
         scene.add(this.neptuneOrbitNode);
         this.neptuneOrbitNode.add(this.neptuneCenterNode);
         this.neptuneCenterNode.add(this.neptune);
 
         //Det nye Materialet forholder seg til lys, og vil være helt svart.
         //Legger derfor til lys i scenen - PointLight lyser i alle retninger rundt seg
-        this.sunLight = new PointLight(0xffffff, 3);
+        this.sunLight = new PointLight(0xffffff, 1.5);
         //Legger lyset som barn av solen
         this.sun.add(this.sunLight);
 
@@ -185,7 +185,7 @@ export default class SolarSystem{
         this.rotateObject(this.mars, [0.0, 0.015, 0.0]);
         this.rotateObject(this.jupiterOrbitNode, [0.0, 0.001, 0.0]);
         this.rotateObject(this.jupiter, [0.0, 0.013, 0.0]);
-        this.rotateObject(this.saturnOrbitNode, [0.0, 0.0008, 0.0]);
+        this.rotateObject(this.saturnOrbitNode, [0.0, 0.0005, 0.0]);
         this.rotateObject(this.saturn, [0.0, 0.011, 0.0]);
         this.rotateObject(this.neptuneOrbitNode, [0.0, 0.00009, 0.0]);
         this.rotateObject(this.neptune, [0.0, 0.009, 0.0]);
