@@ -60,33 +60,24 @@ export default class SolarSystem{
         //Samme prosedyre for jorden vår
         //Last inn tekstur og gi denne til et Material
         let earthTextureUrl = 'assets/texture_earth.jpg';
-        let earthTexture = new TextureLoader().load(earthTextureUrl);
-
 
         //Fikk ikke gjort på forelesning:
         //Bruk av Specular Map - definerer hvor "shiny" forskjellige områder på objektet skal være
         //Bruk av Normal Map - Lager illusjon av høyde og dybde ved at en tekstur brukes for å definere endringer i normalene over objektet
-        let earthSpecularMap = new TextureLoader().load("assets/earthspec1k.jpg");
-        let earthNormalMap = new TextureLoader().load("assets/2k_earth_normal_map.png");
-        //Bruker her MeshPhongMaterial - litt mer avansert Material som forholder seg til lys
-        let earthMaterial = new MeshPhongMaterial({map:earthTexture,
-                                                            shininess:1.0,
-                                                            specular: earthSpecularMap,
-                                                            normalMap: earthNormalMap
-                                                            });
-
-        /*
-        earthMaterial = new SimpleSmokeMaterial({
-            paramMap: earthTexture
-        });
-        */
+        let earthSpecularMapURL = './assets/earthspec1k.jpg';
+        let earthNormalMapURL = './assets/2k_earth_normal_map.png';
 
         //Forandrer radius - gjør jorden halvparten så stor som solen
-        radius = 2.5;
-        let earthGeometry = new SphereGeometry(radius, widthSegments, heightSegments);
+        radius = 2.2;
 
         //Oppretter Mesh for jorden ved å gi Geometry og Material
-        this.earth = new Mesh(earthGeometry, earthMaterial);
+        //this.earth = new Mesh(earthGeometry, earthMaterial);
+        this.earth = new Planet({
+            radius: radius,
+            planetTextureURL: earthTextureUrl,
+            planetSpecularMap: earthSpecularMapURL,
+            planetNormalMap: earthNormalMapURL
+        });
 
         this.earthCenterNode = new Object3D();
         this.earthOrbitNode.add(this.earthCenterNode);
@@ -98,22 +89,7 @@ export default class SolarSystem{
 
         //lagar månen:
         let moonTextureUrl = './assets/2k_moon.jpg';
-        /*
-        let moonTexture = new TextureLoader().load(moonTextureUrl);
         
-        //todo specular og normal map?
-
-        let moonMaterial = new MeshPhongMaterial({
-            map: moonTexture,
-            shininess: 1.0
-        });
-
-        //gjer månen liten
-        radius = 0.5;
-        let moonGeometry = new SphereGeometry(radius, widthSegments, heightSegments);
-
-        this.moon = new Mesh(moonGeometry, moonMaterial);
-        */
         this.moon = new Planet({
             radius: 0.5,
             planetTextureURL: moonTextureUrl
@@ -130,10 +106,12 @@ export default class SolarSystem{
         //lagar mars:
         this.marsOrbitNode = new Object3D();
         this.marsCenterNode = new Object3D();
-        let marsTextureURL = './assets/2k_mars.jpg';
+        let marsTextureURL = './assets/5672_mars_2k_color.jpg';
+        let marsNormalURL = './assets/5672_mars_2k_normal.jpg';
         this.mars = new Planet({
-            radius: 1.2,
-            planetTextureURL: marsTextureURL
+            radius: 1.5,
+            planetTextureURL: marsTextureURL,
+            planetNormalMapURL: marsNormalURL
         });
         //flytter mars ut
         this.marsCenterNode.position.x = 25;
@@ -143,6 +121,47 @@ export default class SolarSystem{
         this.marsOrbitNode.add(this.marsCenterNode);
         this.marsCenterNode.add(this.mars);
         
+        //lagar jupiter
+        this.jupiterOrbitNode = new Object3D();
+        this.jupiterCenterNode = new Object3D();
+        let jupiterTextureURL = './assets/2k_jupiter.jpg';
+        this.jupiter = new Planet({
+            radius: 3.5,
+            planetTextureURL: jupiterTextureURL
+        });
+
+        this.jupiterCenterNode.position.x = 35;
+        scene.add(this.jupiterOrbitNode);
+        this.jupiterOrbitNode.add(this.jupiterCenterNode);
+        this.jupiterCenterNode.add(this.jupiter);
+
+        //lagar saturn
+        this.saturnOrbitNode = new Object3D();
+        this.saturnCenterNode = new Object3D();
+        let saturnTextureURL = './assets/2k_saturn.jpg';
+        this.saturn = new Planet({
+            radius: 3.0,
+            planetTextureURL: saturnTextureURL
+        });
+
+        this.saturnCenterNode.position.x = 45;
+        scene.add(this.saturnOrbitNode);
+        this.saturnOrbitNode.add(this.saturnCenterNode);
+        this.saturnCenterNode.add(this.saturn);
+
+        //lagar neptun
+        this.neptuneOrbitNode = new Object3D();
+        this.neptuneCenterNode = new Object3D();
+        let neptuneTextureURL = './assets/2k_neptune.jpg';
+        this.neptune = new Planet({
+            radius: 3.0,
+            planetTextureURL: neptuneTextureURL
+        });
+
+        this.neptuneCenterNode.position.x = 55;
+        scene.add(this.neptuneOrbitNode);
+        this.neptuneOrbitNode.add(this.neptuneCenterNode);
+        this.neptuneCenterNode.add(this.neptune);
 
         //Det nye Materialet forholder seg til lys, og vil være helt svart.
         //Legger derfor til lys i scenen - PointLight lyser i alle retninger rundt seg
@@ -164,6 +183,12 @@ export default class SolarSystem{
         this.rotateObject(this.moonOrbitNode, [0.0, 0.1, 0.0]);
         this.rotateObject(this.marsOrbitNode, [0.0, 0.008, 0.0]);
         this.rotateObject(this.mars, [0.0, 0.015, 0.0]);
+        this.rotateObject(this.jupiterOrbitNode, [0.0, 0.001, 0.0]);
+        this.rotateObject(this.jupiter, [0.0, 0.013, 0.0]);
+        this.rotateObject(this.saturnOrbitNode, [0.0, 0.0008, 0.0]);
+        this.rotateObject(this.saturn, [0.0, 0.011, 0.0]);
+        this.rotateObject(this.neptuneOrbitNode, [0.0, 0.00009, 0.0]);
+        this.rotateObject(this.neptune, [0.0, 0.009, 0.0]);
     }
 
     rotateObject(object, rotation){
