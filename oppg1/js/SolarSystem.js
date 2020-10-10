@@ -5,7 +5,7 @@ import {
     Mesh,
     MeshBasicMaterial,
     MeshPhongMaterial,
-    Object3D, PointLight, Sphere,
+    Object3D, Plane, PointLight, Sphere,
     SphereGeometry,
     TextureLoader
 } from "./build/three.module.js";
@@ -87,11 +87,24 @@ export default class SolarSystem{
 
         this.earthCenterNode.add(this.earth);
 
+        //lagar geostasjonær satelitt rundt jorda (med meteoritt-tekstur...)
+        this.geostationarySatellite = new Planet({
+            radius: 0.4,
+            planetTextureURL: './assets/meteorite.jpg'
+        });
+        this.satelliteOrbitNode = new Object3D();
+        this.satelliteCenterNode = new Object3D();
+        this.satelliteCenterNode.position.x = 3;
+
+        this.satelliteCenterNode.add(this.geostationarySatellite);
+        this.satelliteOrbitNode.add(this.satelliteCenterNode);
+        this.earth.add(this.satelliteOrbitNode);
+
         //lagar månen:
         let moonTextureUrl = './assets/2k_moon.jpg';
         
         this.moon = new Planet({
-            radius: 0.5,
+            radius: 0.6,
             planetTextureURL: moonTextureUrl
         });
 
