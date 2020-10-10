@@ -48,7 +48,7 @@ void main() {
     //task 6
     float linearFogFactor = (endPoint - length(position))/(endPoint - startPoint);
 
-    //TODO leggje til fleire tåke-faktorar:
+    //leggje til fleire tåke-faktorar:
     float exponentialFogFactor = 1.0/(exp(length(position)*fogDensity));
 
     vec3 normal = normalize(normal); // Interpolated normal may not be normalized anymore.

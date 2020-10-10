@@ -51,7 +51,7 @@ export default class PhysicsManager {
 
             //task 2
             //hopper over statiske objekt
-            if (this.entities[i].dynamic === false) {
+            if (!this.entities[i].dynamic) {
                 continue;
             }
 
